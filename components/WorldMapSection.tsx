@@ -74,14 +74,14 @@ function Globe() {
 
 export default function WorldMapSection() {
   return (
-    <section className="hand-section">
+    <section id="map" className="hand-section scroll-mt-28">
       <Container>
         <SectionTitle
           title="Nomad globe."
           subtitle="places I have visited, marked like pins in a notebook"
         />
 
-        <div className="sketch-card relative mt-12 overflow-hidden p-5">
+        <div className="relative mt-12 overflow-hidden">
           <div className="h-[420px] w-full">
             <Canvas camera={{ position: [0, 0, 6], fov: 42 }}>
               <ambientLight intensity={1.8} />
@@ -96,7 +96,7 @@ export default function WorldMapSection() {
             </Canvas>
           </div>
 
-          <div className="mt-5 grid gap-2 text-xl text-[#4f4942] sm:grid-cols-2">
+          <div className="mt-5 grid gap-2 border-t-2 border-dashed border-[#181614] pt-5 text-xl text-[#4f4942] sm:grid-cols-2">
             {mapPlaces.map((place) => (
               <p key={place.id} className="flex items-center gap-2">
                 <MapPin size={18} fill="#181614" />

@@ -6,16 +6,20 @@ import ExtraActivities from "@/components/ExtraActivities";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import { getActivities } from "@/lib/activities-store";
+import { getIntroContent } from "@/lib/profile-store";
 
 export default async function HomePage() {
-  const activities = await getActivities();
+  const [activities, intro] = await Promise.all([
+    getActivities(),
+    getIntroContent(),
+  ]);
 
   return (
     <>
       <Navbar />
 
       <main>
-        <IntroSection />
+        <IntroSection intro={intro} />
         <WorldMapSection />
         <FeaturedProjects />
         <ExtraActivities activities={activities} />

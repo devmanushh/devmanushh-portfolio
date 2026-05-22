@@ -15,7 +15,7 @@ export default function ExtraActivities({
   const [openId, setOpenId] = useState<number | null>(activities[0]?.id ?? null);
 
   return (
-    <section className="hand-section">
+    <section id="extra" className="hand-section scroll-mt-28">
       <Container>
         <SectionTitle
           title="Extra activities."

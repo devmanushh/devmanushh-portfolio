@@ -1,6 +1,8 @@
-export default function IntroSection() {
+import type { IntroContent } from "@/lib/profile-store";
+
+export default function IntroSection({ intro }: { intro: IntroContent }) {
   return (
-    <section className="hand-section">
+    <section id="home" className="hand-section scroll-mt-28">
       <div className="paper-shell grid items-center gap-10 md:grid-cols-[260px_1fr]">
         <div className="relative mx-auto h-56 w-56 rounded-[48%_52%_45%_55%] border-[3px] border-[#181614] bg-[#fffaf0]/60">
           <div className="absolute left-1/2 top-[28%] h-12 w-12 -translate-x-1/2 rounded-full border-[3px] border-[#181614]" />
@@ -11,11 +13,19 @@ export default function IntroSection() {
         <div>
           <p className="mb-4 text-2xl font-bold">introduction.</p>
           <h1 className="hand-title max-w-3xl font-bold">
-            Software engineer with a messy notebook and a clean build habit.
+            {intro.heading}
           </h1>
           <div className="mt-8 grid max-w-2xl gap-3 text-2xl leading-8 text-[#4f4942]">
-            <p>Building scalable systems, products, and small experiments.</p>
-            <p>Also collecting places, photos, notes, and odd little ideas.</p>
+            <p>{intro.lineOne}</p>
+            <p>{intro.lineTwo}</p>
+            <div className="mt-7 w-fit border-t-2 border-[#181614] pt-4">
+              <p className="text-xl font-bold text-[#181614]">
+                currently working for
+              </p>
+              <p className="mt-1 text-2xl text-[#4f4942]">
+                {intro.currentCompany} · {intro.currentRole}
+              </p>
+            </div>
           </div>
         </div>
       </div>

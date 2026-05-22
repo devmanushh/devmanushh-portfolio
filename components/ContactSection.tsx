@@ -3,7 +3,7 @@ import SectionTitle from "@/components/SectionTitle";
 
 export default function ContactSection() {
   return (
-    <section className="hand-section">
+    <section id="contact" className="hand-section scroll-mt-28">
       <Container>
         <SectionTitle title="Contact details." subtitle="say hello" />
 
