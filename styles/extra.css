@@ -1,0 +1,58 @@
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.activity-card {
+  padding: 0;
+}
+
+.activity-trigger {
+  display: grid;
+  width: 100%;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  background: transparent;
+  color: var(--text);
+  padding: 1.1rem;
+  text-align: left;
+}
+
+.activity-trigger strong,
+.activity-trigger em {
+  display: block;
+}
+
+.activity-trigger strong {
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
+}
+
+.activity-trigger em {
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-style: normal;
+  line-height: 1.55;
+}
+
+.activity-trigger svg:last-child {
+  color: var(--accent);
+  transition: transform 260ms ease;
+}
+
+.activity-trigger svg.is-open {
+  transform: rotate(180deg);
+}
+
+.activity-details {
+  overflow: hidden;
+}
+
+.activity-details p {
+  margin: 0 1.1rem 1.1rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  line-height: 1.75;
+  padding-top: 1rem;
+}

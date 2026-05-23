@@ -1,0 +1,255 @@
+.nomad-section {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  padding: clamp(5.5rem, 8vw, 8rem) 4vw clamp(4rem, 7vw, 7rem);
+  background: transparent;
+  color: var(--text);
+}
+
+.nomad-stars,
+.nomad-background-planet {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.nomad-stars {
+  opacity: 0.24;
+  background-image:
+    radial-gradient(circle, color-mix(in srgb, var(--accent) 42%, transparent) 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.5) 1px, transparent 1.6px);
+  background-position: 0 0, 34px 48px;
+  background-size: 120px 120px, 180px 180px;
+  animation: nomadStarDrift 26s linear infinite;
+}
+
+.nomad-background-planet {
+  left: auto;
+  right: -20vw;
+  top: 8vh;
+  width: min(48rem, 58vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.5), transparent 22%),
+    radial-gradient(circle at 62% 66%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 33%);
+  filter: blur(10px);
+  opacity: 0.3;
+}
+
+.nomad-eyebrow {
+  position: absolute;
+  left: clamp(1.4rem, 5vw, 4.2rem);
+  top: clamp(5.4rem, 8vw, 7.2rem);
+  z-index: 5;
+  margin: 0;
+}
+
+.nomad-layout {
+  position: relative;
+  z-index: 2;
+  width: min(1500px, 100%);
+  min-height: calc(100svh - 11rem);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 50vw) minmax(300px, 1fr);
+  align-items: center;
+  gap: clamp(1.4rem, 4vw, 4rem);
+  padding-top: 2rem;
+}
+
+.nomad-globe-panel {
+  position: relative;
+  width: min(50vw, 800px);
+  height: clamp(560px, 70vh, 720px);
+  overflow: visible;
+  transform: translateY(-1rem);
+}
+
+.nomad-globe-panel canvas {
+  cursor: grab;
+}
+
+.globe-pin {
+  position: relative;
+  display: grid;
+  place-items: center;
+  filter: drop-shadow(0 0 9px color-mix(in srgb, var(--accent) 80%, transparent));
+}
+
+.globe-pin-dot {
+  width: 7px;
+  height: 7px;
+  display: block;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent),
+    0 0 16px color-mix(in srgb, var(--accent) 72%, transparent);
+}
+
+.globe-pin-index {
+  position: absolute;
+  left: 0.7rem;
+  top: -0.42rem;
+  color: var(--text);
+  font-size: 0.62rem;
+  font-weight: 900;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.globe-pin:hover .globe-pin-index {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.nomad-stream-panel {
+  position: relative;
+  z-index: 4;
+  width: min(620px, 100%);
+  justify-self: start;
+}
+
+.coordinate-track {
+  display: grid;
+  gap: 1.1rem;
+  padding: 0;
+}
+
+.nomad-stream-eyebrow {
+  margin: 0;
+}
+
+.coordinate-scroll-window {
+  --row-height: 3.3rem;
+  position: relative;
+  height: calc(var(--row-height) * 2);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 16%, #000 84%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 16%, #000 84%, transparent);
+}
+
+.coordinate-scroll-window::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  right: 0.2rem;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 42%, transparent), transparent);
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.coordinate-scroll-list {
+  display: grid;
+  animation: coordinateVerticalLoop 9s linear infinite;
+}
+
+.coordinate-row {
+  width: max-content;
+  min-height: var(--row-height);
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  align-items: baseline;
+  gap: clamp(0.7rem, 1.7vw, 1.35rem);
+  scroll-snap-align: start;
+  color: var(--text);
+  font-size: clamp(1rem, 1.55vw, 1.28rem);
+  font-weight: 850;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  text-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
+  padding-left: 0.2rem;
+}
+
+.coordinate-index,
+.coordinate-row em,
+.coordinate-row code {
+  color: var(--muted);
+  font-style: normal;
+}
+
+.coordinate-row strong {
+  color: var(--text);
+  font-size: inherit;
+  line-height: 1.15;
+}
+
+.coordinate-row code {
+  color: var(--accent);
+  font-family: inherit;
+  font-weight: 900;
+}
+
+@keyframes coordinateFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes coordinateVerticalLoop {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes nomadStarDrift {
+  from {
+    background-position: 0 0, 34px 48px;
+  }
+
+  to {
+    background-position: 120px 120px, 214px 228px;
+  }
+}
+
+@media (max-width: 900px) {
+  .nomad-section {
+    padding-inline: 1.25rem;
+  }
+
+  .nomad-layout {
+    grid-template-columns: 1fr;
+    place-items: center;
+    gap: 0.5rem;
+  }
+
+  .nomad-globe-panel {
+    width: min(112vw, 720px);
+    height: 620px;
+    transform: translateY(0);
+  }
+
+  .nomad-stream-panel {
+    width: 90vw;
+    justify-self: center;
+  }
+
+  .coordinate-track {
+    width: 90vw;
+  }
+}
+
+@media (max-width: 620px) {
+  .nomad-globe-panel {
+    height: 540px;
+  }
+
+  .coordinate-row {
+    grid-template-columns: auto auto auto auto;
+  }
+}

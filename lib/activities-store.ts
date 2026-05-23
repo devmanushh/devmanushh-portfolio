@@ -52,3 +52,22 @@ export async function deleteActivity(id: number) {
 
   return nextActivities.length !== activities.length;
 }
+
+export async function updateActivity(
+  id: number,
+  input: Omit<Activity, "id">,
+) {
+  const activities = await getActivities();
+  const nextActivities = activities.map((activity) =>
+    activity.id === id
+      ? {
+          id,
+          ...input,
+        }
+      : activity,
+  );
+
+  await fs.writeFile(storePath, JSON.stringify(nextActivities, null, 2), "utf8");
+
+  return nextActivities;
+}

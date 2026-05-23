@@ -4,4 +4,6 @@ export type Experience = {
   company: string;
   duration: string;
   description?: string;
+  github?: string;
+  linkedin?: string;
 };
