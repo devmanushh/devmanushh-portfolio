@@ -223,6 +223,7 @@ export default async function AdminDashboard() {
             <input name="description" placeholder="Brief description" required />
             <textarea name="details" rows={3} placeholder="Project details" />
             <input name="github" placeholder="GitHub link" />
+            <input name="techStack" placeholder="Tech stack, comma separated: Next.js, TypeScript, Prisma" />
             <FormActions label="Add Project" />
           </form>
 
@@ -239,6 +240,11 @@ export default async function AdminDashboard() {
                   />
                   <textarea name="details" rows={3} defaultValue={project.details} />
                   <input name="github" defaultValue={project.github} />
+                  <input
+                    name="techStack"
+                    defaultValue={project.techStack?.join(", ")}
+                    placeholder="Tech stack, comma separated"
+                  />
                   <FormActions label="Update Project" />
                 </form>
                 <form action={removeProject} style={{ marginTop: "10px" }}>
@@ -367,6 +373,13 @@ export default async function AdminDashboard() {
             required
           />
           <input name="buttonLabel" defaultValue={contact.buttonLabel} required />
+          <input name="facebook" defaultValue={contact.facebook ?? ""} placeholder="Facebook profile URL" />
+          <input name="instagram" defaultValue={contact.instagram ?? ""} placeholder="Instagram profile URL" />
+          <input name="snapchat" defaultValue={contact.snapchat ?? ""} placeholder="Snapchat profile URL" />
+          <input name="github" defaultValue={contact.github ?? ""} placeholder="GitHub profile URL" />
+          <input name="x" defaultValue={contact.x ?? ""} placeholder="X profile URL" />
+          <input name="linkedin" defaultValue={contact.linkedin ?? ""} placeholder="LinkedIn profile URL" />
+          <input name="website" defaultValue={contact.website ?? ""} placeholder="Website or portfolio URL" />
           <FormActions label="Save Contact" />
         </form>
       </section>

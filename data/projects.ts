@@ -7,6 +7,7 @@ export const projects = [
     details:
       "A quick trading platform build focused on clean dashboards, fast state, and practical product flows.",
     github: "#",
+    techStack: ["Next.js", "TypeScript", "PostgreSQL"],
   },
 
   {
@@ -17,6 +18,7 @@ export const projects = [
     details:
       "A movie booking platform build with show discovery, booking states, and payment-oriented flows.",
     github: "#",
+    techStack: ["Next.js", "Tailwind", "Payments"],
   },
 
   {
@@ -27,5 +29,6 @@ export const projects = [
     details:
       "A sample project added to test expand and hide behavior with the hanging wooden board layout.",
     github: "#",
+    techStack: ["Next.js", "Boards", "UX"],
   },
 ];

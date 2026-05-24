@@ -18,7 +18,10 @@ export async function getProjects(): Promise<Project[]> {
   await ensureStore();
   const raw = await fs.readFile(storePath, "utf8");
 
-  return JSON.parse(raw) as Project[];
+  return (JSON.parse(raw) as Project[]).map((project) => ({
+    ...project,
+    techStack: project.techStack ?? [],
+  }));
 }
 
 export async function addProject(input: Omit<Project, "id">) {

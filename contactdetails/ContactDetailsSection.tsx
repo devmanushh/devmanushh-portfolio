@@ -1,7 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Send, SignalHigh } from "lucide-react";
+import { Globe, Mail, Send } from "lucide-react";
+import {
+  FaFacebookF,
+  FaGithub,
+  FaInstagram,
+  FaLinkedinIn,
+  FaSnapchat,
+  FaXTwitter,
+} from "react-icons/fa6";
 import { useState } from "react";
 
 import type { ContactContent } from "@/types/contact";
@@ -12,6 +20,20 @@ export default function ContactDetailsSection({
   contact: ContactContent;
 }) {
   const [sent, setSent] = useState(false);
+  const contactLinks = [
+    {
+      label: "Email",
+      href: `mailto:${contact.email}`,
+      Icon: Mail,
+    },
+    { label: "Facebook", href: contact.facebook, Icon: FaFacebookF },
+    { label: "Instagram", href: contact.instagram, Icon: FaInstagram },
+    { label: "Snapchat", href: contact.snapchat, Icon: FaSnapchat },
+    { label: "GitHub", href: contact.github, Icon: FaGithub },
+    { label: "X", href: contact.x, Icon: FaXTwitter },
+    { label: "LinkedIn", href: contact.linkedin, Icon: FaLinkedinIn },
+    { label: "Website", href: contact.website, Icon: Globe },
+  ];
 
   return (
     <section id="contact" className="contact-section">
@@ -22,17 +44,48 @@ export default function ContactDetailsSection({
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.72 }}
         >
-          <span className="section-eyebrow">deep-space communication</span>
+          <span className="section-eyebrow">royal correspondence</span>
           <h2 className="section-title">{contact.title}</h2>
           <p className="section-subtitle">{contact.subtitle}</p>
-          <div className="contact-frequency">
-            <SignalHigh size={20} />
-            <span>{contact.email}</span>
+
+          <div className="contact-socials" aria-label="Contact links">
+            {contactLinks.map(({ label, href, Icon }) => {
+              const isLinked = Boolean(href);
+              const isExternal = href && !href.startsWith("mailto:");
+              const content = (
+                <>
+                  <Icon size={20} />
+                  <span>{label}</span>
+                </>
+              );
+
+              return isLinked ? (
+                <a
+                  key={label}
+                  href={href}
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noreferrer" : undefined}
+                  aria-label={label}
+                  title={label}
+                >
+                  {content}
+                </a>
+              ) : (
+                <span
+                  key={label}
+                  className="contact-social-link is-disabled"
+                  aria-label={`${label} link not added`}
+                  title={label}
+                >
+                  {content}
+                </span>
+              );
+            })}
           </div>
         </motion.div>
 
         <motion.form
-          className="contact-terminal holo-panel"
+          className="contact-letter"
           onSubmit={(event) => {
             event.preventDefault();
             setSent(true);
@@ -42,6 +95,9 @@ export default function ContactDetailsSection({
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.72, delay: 0.08 }}
         >
+          <span className="letter-aura" aria-hidden="true" />
+          <span className="letter-sparkles" aria-hidden="true" />
+          <div className="letter-crown" aria-hidden="true" />
           <label>
             <span>name</span>
             <input placeholder={contact.namePlaceholder} />
@@ -56,7 +112,7 @@ export default function ContactDetailsSection({
           </label>
           <button type="submit" className="holo-button">
             <Send size={18} />
-            {sent ? "signal queued" : contact.buttonLabel}
+            {sent ? "sealed and sent" : contact.buttonLabel}
           </button>
         </motion.form>
       </div>

@@ -14,6 +14,13 @@ const defaultContact: ContactContent = {
   messagePlaceholder: "your message",
   buttonLabel: "send message",
   email: profile.email,
+  facebook: "",
+  instagram: "",
+  snapchat: "",
+  github: "",
+  x: "",
+  linkedin: "",
+  website: "",
 };
 
 async function ensureStore() {

@@ -5,55 +5,285 @@
   align-items: start;
 }
 
-.contact-frequency {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
+.contact-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.78rem;
   margin-top: 1.5rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface-soft);
-  color: var(--accent);
-  padding: 0.78rem 1rem;
 }
 
-.contact-terminal {
+.contact-socials a,
+.contact-social-link {
+  position: relative;
+  display: inline-grid;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--line));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--surface-strong) 78%, transparent);
+  color: var(--text);
+  padding: 0;
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--accent) 8%, transparent);
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    background 220ms ease;
+}
+
+.contact-socials a:hover {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-strong));
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-3px);
+}
+
+.contact-social-link.is-disabled {
+  color: color-mix(in srgb, var(--muted) 76%, transparent);
+  opacity: 0.58;
+}
+
+.contact-socials a span,
+.contact-social-link span {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.contact-letter {
+  position: relative;
   display: grid;
   gap: 1rem;
-  padding: 1.2rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--accent) 26%, rgba(84, 46, 24, 0.36));
+  border-radius: 18px 14px 20px 13px;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(255, 255, 255, 0.32), transparent 10rem),
+    radial-gradient(circle at 86% 88%, rgba(118, 66, 28, 0.12), transparent 12rem),
+    linear-gradient(135deg, rgba(248, 231, 189, 0.64) 0%, rgba(236, 210, 154, 0.5) 48%, rgba(215, 175, 109, 0.42) 100%);
+  color: #2b190f;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.24),
+    0 0 54px color-mix(in srgb, var(--accent) 12%, transparent),
+    inset 0 0 0 1px rgba(255, 252, 232, 0.34),
+    inset 0 0 44px rgba(101, 48, 15, 0.1);
+  backdrop-filter: blur(18px) saturate(1.15);
+  transform-style: preserve-3d;
+  animation: letterFloat 7s ease-in-out infinite;
 }
 
-.contact-terminal label {
+.contact-letter::before,
+.contact-letter::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.contact-letter::before {
+  inset: 12px;
+  border: 1px solid rgba(89, 47, 23, 0.24);
+  border-radius: 13px 11px 16px 10px;
+  background:
+    linear-gradient(115deg, transparent 0 28%, rgba(255, 255, 255, 0.2) 38%, transparent 52%),
+    repeating-linear-gradient(0deg, rgba(78, 45, 22, 0.045) 0 1px, transparent 1px 26px);
+  animation: letterSheen 5.8s ease-in-out infinite;
+}
+
+.contact-letter::after {
+  right: clamp(1.2rem, 4vw, 2.2rem);
+  bottom: 1.05rem;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 182, 146, 0.54), transparent 18%),
+    radial-gradient(circle, #9d1f25 0 48%, #6f1117 49% 100%);
+  box-shadow:
+    0 8px 18px rgba(72, 18, 9, 0.28),
+    inset 0 -8px 14px rgba(43, 0, 0, 0.24);
+  opacity: 0.9;
+  animation: waxSealPulse 3.8s ease-in-out infinite;
+}
+
+.contact-letter .letter-aura,
+.contact-letter .letter-sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.contact-letter .letter-aura {
+  background:
+    radial-gradient(circle at 16% 18%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 9rem),
+    radial-gradient(circle at 82% 18%, color-mix(in srgb, var(--accent-3) 16%, transparent), transparent 8rem),
+    radial-gradient(circle at 50% 104%, rgba(255, 209, 102, 0.2), transparent 12rem);
+  opacity: 0.7;
+  mix-blend-mode: screen;
+  animation: letterAuraDrift 8s ease-in-out infinite;
+}
+
+.contact-letter .letter-sparkles {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.82) 0 1px, transparent 1.6px),
+    radial-gradient(circle, color-mix(in srgb, var(--accent) 72%, white) 0 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(255, 225, 150, 0.78) 0 1px, transparent 1.5px);
+  background-position: 8% 22%, 82% 36%, 46% 82%;
+  background-size: 118px 118px, 156px 156px, 206px 206px;
+  opacity: 0.36;
+  animation: letterSparkleDrift 9s linear infinite;
+}
+
+.letter-crown {
+  position: relative;
+  width: 86px;
+  height: 34px;
+  margin: 0 auto 0.35rem;
+  color: #7b451c;
+}
+
+.letter-crown::before {
+  content: "";
+  position: absolute;
+  inset: 7px 0 0;
+  background:
+    linear-gradient(135deg, transparent 0 18%, currentColor 19% 33%, transparent 34%),
+    linear-gradient(45deg, transparent 0 22%, currentColor 23% 39%, transparent 40%),
+    linear-gradient(135deg, transparent 0 62%, currentColor 63% 78%, transparent 79%);
+  border-bottom: 5px solid currentColor;
+  opacity: 0.78;
+}
+
+.contact-letter label {
+  position: relative;
+  z-index: 2;
   display: grid;
   gap: 0.45rem;
 }
 
-.contact-terminal label span {
-  color: var(--accent);
+.contact-letter label span {
+  color: #6f3d19;
   font-size: 0.76rem;
   font-weight: 850;
+  text-transform: uppercase;
 }
 
-.contact-terminal input,
-.contact-terminal textarea {
+.contact-letter input,
+.contact-letter textarea {
   width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--surface-soft) 82%, transparent);
-  color: var(--text);
+  border: 0;
+  border-bottom: 2px solid rgba(82, 45, 21, 0.52);
+  border-radius: 0;
+  background: rgba(255, 247, 222, 0.12);
+  color: #2b190f;
   outline: none;
-  padding: 0.95rem 1rem;
+  padding: 0.9rem 0.35rem 0.72rem;
   transition: border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
 }
 
-.contact-terminal textarea {
+.contact-letter input::placeholder,
+.contact-letter textarea::placeholder {
+  color: rgba(72, 41, 20, 0.58);
+}
+
+.contact-letter textarea {
   min-height: 150px;
   resize: vertical;
 }
 
-.contact-terminal input:focus,
-.contact-terminal textarea:focus {
-  border-color: var(--accent);
-  box-shadow: var(--glow);
-  background: color-mix(in srgb, var(--surface-strong) 86%, transparent);
+.contact-letter input:focus,
+.contact-letter textarea:focus {
+  border-color: #9d1f25;
+  box-shadow:
+    0 10px 18px rgba(102, 58, 20, 0.08),
+    0 0 24px color-mix(in srgb, var(--accent) 16%, transparent);
+  background: rgba(255, 250, 232, 0.24);
+}
+
+.contact-letter .holo-button {
+  z-index: 2;
+  width: fit-content;
+  border-color: rgba(82, 45, 21, 0.68);
+  background: #3a2012;
+  color: #fff5dc;
+  box-shadow: 5px 6px 0 rgba(83, 42, 17, 0.18);
+}
+
+@keyframes letterFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotateX(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotateX(1.5deg);
+  }
+}
+
+@keyframes letterSheen {
+  0%,
+  100% {
+    opacity: 0.38;
+    transform: translateX(-8%);
+  }
+  50% {
+    opacity: 0.72;
+    transform: translateX(8%);
+  }
+}
+
+@keyframes letterAuraDrift {
+  0%,
+  100% {
+    opacity: 0.58;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.86;
+    transform: translate3d(14px, -12px, 0) scale(1.05);
+  }
+}
+
+@keyframes letterSparkleDrift {
+  from {
+    background-position: 8% 22%, 82% 36%, 46% 82%;
+  }
+  to {
+    background-position: 18% 0%, 72% 58%, 56% 64%;
+  }
+}
+
+@keyframes waxSealPulse {
+  0%,
+  100% {
+    filter: saturate(1);
+    transform: scale(1);
+  }
+  50% {
+    filter: saturate(1.18) brightness(1.08);
+    transform: scale(1.04);
+  }
+}
+
+.contact-letter .holo-button:hover {
+  border-color: #9d1f25;
+}
+
+@media (max-width: 620px) {
+  .contact-socials a,
+  .contact-social-link {
+    width: 46px;
+    height: 46px;
+  }
+
+  .contact-letter::after {
+    width: 48px;
+    height: 48px;
+    opacity: 0.72;
+  }
 }

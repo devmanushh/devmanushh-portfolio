@@ -5,4 +5,5 @@ export type Project = {
   details?: string;
   github?: string;
   imageUrl?: string;
+  techStack?: string[];
 };

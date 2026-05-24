@@ -60,6 +60,7 @@ const projectSchema = z.object({
   description: z.string().min(1),
   details: z.string().optional(),
   github: z.string().optional(),
+  techStack: z.string().optional(),
 });
 
 const experienceSchema = z.object({
@@ -92,6 +93,13 @@ const contactSchema = z.object({
   messagePlaceholder: z.string().min(1),
   buttonLabel: z.string().min(1),
   email: z.string().min(1),
+  facebook: z.string().optional(),
+  instagram: z.string().optional(),
+  snapchat: z.string().optional(),
+  github: z.string().optional(),
+  x: z.string().optional(),
+  linkedin: z.string().optional(),
+  website: z.string().optional(),
 });
 
 const adminLoginSchema = z.object({
@@ -102,6 +110,13 @@ const adminLoginSchema = z.object({
 const resumePath = path.join(process.cwd(), "public", "profile", "resume.txt");
 const resumePdfPath = path.join(process.cwd(), "public", "profile", "resume.pdf");
 const profileImageDir = path.join(process.cwd(), "public", "profile");
+
+function parseCommaList(value?: string) {
+  return (value ?? "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
 
 export async function adminLogin(formData: FormData) {
   const parsed = adminLoginSchema.parse(Object.fromEntries(formData));
@@ -257,6 +272,7 @@ export async function createProject(formData: FormData) {
     description: parsed.description,
     details: parsed.details?.trim() || undefined,
     github: parsed.github?.trim() || undefined,
+    techStack: parseCommaList(parsed.techStack),
   });
 
   revalidatePath("/");
@@ -272,6 +288,7 @@ export async function editProject(formData: FormData) {
     description: parsed.description,
     details: parsed.details?.trim() || undefined,
     github: parsed.github?.trim() || undefined,
+    techStack: parseCommaList(parsed.techStack),
   });
 
   revalidatePath("/");
@@ -398,7 +415,16 @@ export async function removePlace(formData: FormData) {
 export async function updateContact(formData: FormData) {
   const parsed = contactSchema.parse(Object.fromEntries(formData));
 
-  await updateContactContent(parsed);
+  await updateContactContent({
+    ...parsed,
+    facebook: parsed.facebook?.trim() || "",
+    instagram: parsed.instagram?.trim() || "",
+    snapchat: parsed.snapchat?.trim() || "",
+    github: parsed.github?.trim() || "",
+    x: parsed.x?.trim() || "",
+    linkedin: parsed.linkedin?.trim() || "",
+    website: parsed.website?.trim() || "",
+  });
 
   revalidatePath("/");
   revalidatePath("/admin");
