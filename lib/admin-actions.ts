@@ -130,6 +130,8 @@ export type AdminFormState = {
 const resumePath = path.join(process.cwd(), "public", "profile", "resume.txt");
 const resumePdfPath = path.join(process.cwd(), "public", "profile", "resume.pdf");
 const profileImageDir = path.join(process.cwd(), "public", "profile");
+const managedHeroImagePattern = /^hero-image\.[a-z0-9]+$/iu;
+const managedResumePdfPattern = /^resume(?:[-_].*)?\.pdf$/iu;
 
 function parseCommaList(value?: string) {
   return (value ?? "")
@@ -372,6 +374,61 @@ function getImageExtension(file: File) {
   return ".jpg";
 }
 
+function isInsideDirectory(directory: string, target: string) {
+  const relativePath = path.relative(directory, target);
+
+  return Boolean(relativePath) && !relativePath.startsWith("..") && !path.isAbsolute(relativePath);
+}
+
+async function removeFileIfInside(directory: string, target: string) {
+  const resolvedDirectory = path.resolve(directory);
+  const resolvedTarget = path.resolve(target);
+
+  if (!isInsideDirectory(resolvedDirectory, resolvedTarget)) {
+    return;
+  }
+
+  await fs.rm(resolvedTarget, { force: true });
+}
+
+async function removeManagedProfileFiles(
+  pattern: RegExp,
+  keepPath?: string,
+) {
+  try {
+    const files = await fs.readdir(profileImageDir, { withFileTypes: true });
+    const resolvedKeepPath = keepPath ? path.resolve(keepPath) : "";
+
+    await Promise.all(
+      files
+        .filter((file) => file.isFile() && pattern.test(file.name))
+        .map(async (file) => {
+          const target = path.join(profileImageDir, file.name);
+
+          if (resolvedKeepPath && path.resolve(target) === resolvedKeepPath) {
+            return;
+          }
+
+          await removeFileIfInside(profileImageDir, target);
+        }),
+    );
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+      throw error;
+    }
+  }
+}
+
+async function removeLocalProfileAsset(assetUrl?: string) {
+  if (!assetUrl?.startsWith("/profile/")) {
+    return;
+  }
+
+  const target = path.join(process.cwd(), "public", assetUrl);
+
+  await removeFileIfInside(profileImageDir, target);
+}
+
 export async function updateResume(formData: FormData) {
   const parsed = resumeSchema.parse(Object.fromEntries(formData));
 
@@ -396,6 +453,7 @@ export async function updateResumePdf(formData: FormData) {
   const bytes = Buffer.from(await file.arrayBuffer());
 
   await fs.mkdir(path.dirname(resumePdfPath), { recursive: true });
+  await removeManagedProfileFiles(managedResumePdfPattern);
   await fs.writeFile(resumePdfPath, bytes);
 
   revalidatePath("/");
@@ -432,6 +490,8 @@ export async function updateHeroImage(formData: FormData) {
   const intro = await getIntroContent();
 
   await fs.mkdir(profileImageDir, { recursive: true });
+  await removeManagedProfileFiles(managedHeroImagePattern);
+  await removeLocalProfileAsset(intro.heroImageUrl);
   await fs.writeFile(imagePath, bytes);
   await updateIntroContent({
     ...intro,
