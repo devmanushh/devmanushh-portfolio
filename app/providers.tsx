@@ -2,6 +2,7 @@
 
 import Lenis from "lenis";
 import { ThemeProvider } from "next-themes";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 function StoryBackground() {
@@ -73,7 +74,14 @@ function StoryBackground() {
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isAdminRoute = pathname?.startsWith("/admin");
+
   useEffect(() => {
+    if (isAdminRoute) {
+      return;
+    }
+
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     if (reduceMotion.matches) {
@@ -107,7 +115,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       cancelAnimationFrame(frame);
       lenis.destroy();
     };
-  }, []);
+  }, [isAdminRoute]);
 
   return (
     <ThemeProvider
@@ -116,7 +124,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       enableSystem={false}
       themes={["light", "dark"]}
     >
-      <StoryBackground />
+      {isAdminRoute ? null : <StoryBackground />}
       {children}
     </ThemeProvider>
   );

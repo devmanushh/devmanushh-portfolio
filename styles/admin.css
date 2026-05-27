@@ -1,13 +1,15 @@
 .admin-shell {
   display: flex;
   min-height: 100vh;
-  background:
-    linear-gradient(90deg, rgba(24, 22, 20, 0.035) 1px, transparent 1px),
-    linear-gradient(rgba(24, 22, 20, 0.025) 1px, transparent 1px),
-    #f5f1e8;
-  background-size: 42px 42px;
+  background: #f6f7f9;
   color: #181614;
+  font-family: Arial, "Segoe UI", sans-serif;
 }
+
+.admin-shell * {
+  letter-spacing: 0;
+}
+
 .admin-sidebar {
   position: sticky;
   top: 0;
@@ -15,37 +17,42 @@
   flex-direction: column;
   width: 260px;
   height: 100vh;
-  border-right: 2px solid rgba(24, 22, 20, 0.58);
-  background: rgba(255, 250, 240, 0.48);
-  padding: 26px;
+  border-right: 1px solid #d7dbe2;
+  background: #ffffff;
+  padding: 24px;
 }
 
 .admin-sidebar h2 {
-  margin: 0 0 32px;
-  font-size: 1.65rem;
+  margin: 0 0 28px;
+  font-size: 1.35rem;
+  font-weight: 800;
 }
 
 .admin-nav {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 14px;
+  gap: 6px;
 }
 
 .admin-nav a,
 .admin-nav button {
-  width: fit-content;
-  border-bottom: 2px solid transparent;
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
   color: #181614;
   background: transparent;
-  font-size: 1.15rem;
-  font-weight: 800;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 0.72rem 0.8rem;
+  text-align: left;
   cursor: pointer;
 }
 
 .admin-nav a:hover,
 .admin-nav button:hover {
-  border-bottom-color: #181614;
+  background: #eef1f5;
 }
 
 .admin-home-form {
@@ -55,34 +62,37 @@
 }
 
 .admin-home-link {
-  border: 2px solid #181614 !important;
-  border-radius: 999px;
-  padding: 0.55rem 1rem;
-  box-shadow: 3px 4px 0 rgba(24, 22, 20, 0.15);
+  border: 1px solid #c9ced8 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  padding: 0.7rem 0.9rem !important;
+  box-shadow: none !important;
+  text-align: center !important;
 }
 
 .admin-main {
   flex: 1;
   min-width: 0;
+  background: #f6f7f9;
 }
 
 .admin-header {
   position: sticky;
   top: 0;
   z-index: 10;
-  border-bottom: 2px solid rgba(24, 22, 20, 0.5);
-  background: rgba(245, 241, 232, 0.82);
+  border-bottom: 1px solid #d7dbe2;
+  background: #ffffff;
   padding: 20px 28px;
-  backdrop-filter: blur(12px);
 }
 
 .admin-header h1 {
   margin: 0;
-  font-size: 1.6rem;
+  font-size: 1.35rem;
+  font-weight: 800;
 }
 
 .admin-content {
-  padding: 32px;
+  padding: 28px;
 }
 
 .admin-content section {
@@ -92,28 +102,29 @@
 .admin-content input,
 .admin-content textarea {
   width: 100%;
-  border: 0;
-  border-bottom: 2px solid rgba(24, 22, 20, 0.72);
-  background: transparent;
-  padding: 0.65rem 0.15rem;
+  border: 1px solid #cfd5df;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 0.72rem 0.8rem;
   color: #181614;
   outline: none;
 }
 
 .admin-content input:focus,
 .admin-content textarea:focus {
-  border-bottom-color: #000;
+  border-color: #181614;
+  box-shadow: 0 0 0 3px rgba(24, 22, 20, 0.08);
 }
 
 .admin-content button {
   width: fit-content;
-  border: 2px solid #181614;
-  border-radius: 999px;
-  background: #fff8e8;
+  border: 1px solid #181614;
+  border-radius: 8px;
+  background: #ffffff;
   color: #181614;
-  padding: 0.62rem 1.1rem;
-  font-weight: 900;
-  box-shadow: 3px 4px 0 rgba(24, 22, 20, 0.16);
+  padding: 0.68rem 1rem;
+  font-weight: 750;
+  box-shadow: none;
   cursor: pointer;
 }
 
@@ -137,9 +148,9 @@
 }
 
 .admin-content form > button[type="submit"] {
-  background: #fff2f2;
-  color: #9b1c1c;
-  border-color: #9b1c1c;
+  background: #fff5f5;
+  color: #a01818;
+  border-color: #e2a6a6;
 }
 
 .admin-content button:hover {
@@ -147,7 +158,7 @@
 }
 
 .admin-content article {
-  background: rgba(255, 250, 240, 0.34);
+  background: #ffffff;
 }
 
 .admin-steps {
