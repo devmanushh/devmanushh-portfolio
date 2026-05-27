@@ -1,6 +1,6 @@
 .hero-section {
   position: relative;
-  min-height: 100svh;
+  min-height: 92svh;
   overflow: hidden;
   padding-top: var(--nav-height);
 }
@@ -13,11 +13,12 @@
   background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent) 12%, transparent), transparent);
   opacity: 0;
   mix-blend-mode: screen;
+  animation: heroScanDrop 4.3s ease-in-out infinite;
 }
 
 .hero-grid {
   display: grid;
-  min-height: calc(100svh - var(--nav-height));
+  min-height: calc(92svh - var(--nav-height));
   grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1fr);
   align-items: center;
   gap: clamp(2rem, 6vw, 6rem);
@@ -30,15 +31,40 @@
   font-family: "Trebuchet MS", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
 }
 
+.hero-copy-stack {
+  display: grid;
+  justify-items: end;
+  gap: 1.25rem;
+}
+
+.hero-visual-signal {
+  display: grid;
+  justify-items: end;
+}
+
 .hero-copy h1 {
   max-width: 680px;
   margin: 0;
   font-family: "Trebuchet MS", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
   font-size: clamp(2.4rem, 5.4vw, 5rem);
   font-weight: 850;
-  letter-spacing: -0.045em;
+  letter-spacing: 0;
   line-height: 0.98;
   text-wrap: balance;
+}
+
+@keyframes heroScanDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-120%);
+  }
+  30% {
+    opacity: 0.42;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(120%);
+  }
 }
 
 .hero-lines {
@@ -223,5 +249,55 @@
   }
   50% {
     transform: translateY(-10px);
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-section {
+    min-height: auto;
+  }
+
+  .hero-grid {
+    min-height: auto;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding-top: 76px;
+  }
+
+  .hero-copy {
+    justify-self: start;
+  }
+
+  .hero-copy-stack {
+    justify-items: start;
+  }
+
+  .hero-visual-signal {
+    justify-items: start;
+  }
+
+  .hero-copy h1 {
+    max-width: 100%;
+    font-size: clamp(2.35rem, 11vw, 4.2rem);
+    line-height: 1.04;
+  }
+
+  .hero-portrait-wrap {
+    width: min(350px, 78vw);
+  }
+
+  .current-mission {
+    width: 100%;
+    border-radius: 18px;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero-grid {
+    padding-top: 68px;
+  }
+
+  .hero-lines {
+    font-size: 0.98rem;
   }
 }

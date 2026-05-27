@@ -80,9 +80,16 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    const isSmallOrTouch =
+      window.innerWidth < 900 || window.matchMedia("(pointer: coarse)").matches;
+
+    if (isSmallOrTouch) {
+      return;
+    }
+
     const lenis = new Lenis({
-      duration: 1.15,
-      lerp: 0.09,
+      duration: 0.82,
+      lerp: 0.12,
       smoothWheel: true,
       wheelMultiplier: 0.9,
     });

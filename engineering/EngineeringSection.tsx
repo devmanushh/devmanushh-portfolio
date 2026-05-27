@@ -1,17 +1,43 @@
 "use client";
 
 import {
+  IconApi,
+  IconBrandBootstrap,
+  IconBrandDocker,
+  IconBrandFirebase,
+  IconBrandGit,
+  IconBrandGithub,
+  IconBrandJavascript,
+  IconBrandMongodb,
   IconBrandNextjs,
+  IconBrandNodejs,
+  IconBrandPython,
+  IconBrandReact,
   IconBrandTailwind,
   IconBrandTypescript,
+  IconBrandVercel,
+  IconChartLine,
+  IconCloud,
+  IconCode,
+  IconCreditCard,
   IconCube,
   IconDatabase,
+  IconGitBranch,
+  IconKey,
+  IconMail,
+  IconMovie,
+  IconNetwork,
+  IconRoute,
+  IconServer,
+  IconTopologyStar3,
+  IconWebhook,
 } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Download, ExternalLink, Eye, EyeOff, FileText, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FaGithub } from "react-icons/fa";
 
+import { SectionHeader } from "@/components/PortfolioChrome";
 import { profile } from "@/data/profile";
 import type { Experience } from "@/types/experience";
 import type { Project } from "@/types/project";
@@ -19,13 +45,59 @@ import type { TechStackItem } from "@/types/tech-stack";
 
 const minimumProjects = 2;
 const minimumExperience = 1;
-const minimumTechStack = 7;
+const desktopTechRowSize = 7;
+
+function getTechRowSize() {
+  if (typeof window === "undefined") {
+    return desktopTechRowSize;
+  }
+
+  if (window.matchMedia("(max-width: 560px)").matches) {
+    return 4;
+  }
+
+  if (window.matchMedia("(max-width: 900px)").matches) {
+    return 4;
+  }
+
+  return desktopTechRowSize;
+}
 
 const iconMap = {
-  next: IconBrandNextjs,
-  typescript: IconBrandTypescript,
-  tailwind: IconBrandTailwind,
+  api: IconApi,
+  architecture: IconTopologyStar3,
+  auth: IconKey,
+  bootstrap: IconBrandBootstrap,
+  chart: IconChartLine,
+  cloud: IconCloud,
+  code: IconCode,
   database: IconDatabase,
+  docker: IconBrandDocker,
+  event: IconWebhook,
+  firebase: IconBrandFirebase,
+  git: IconBrandGit,
+  github: IconBrandGithub,
+  javascript: IconBrandJavascript,
+  mail: IconMail,
+  media: IconMovie,
+  mobile: IconBrandReact,
+  mongodb: IconBrandMongodb,
+  network: IconNetwork,
+  next: IconBrandNextjs,
+  node: IconBrandNodejs,
+  payment: IconCreditCard,
+  prisma: IconDatabase,
+  python: IconBrandPython,
+  react: IconBrandReact,
+  route: IconRoute,
+  server: IconServer,
+  state: IconGitBranch,
+  tailwind: IconBrandTailwind,
+  typescript: IconBrandTypescript,
+  vercel: IconBrandVercel,
+  vite: IconTopologyStar3,
+  websocket: IconWebhook,
+  workflow: IconGitBranch,
   cube: IconCube,
 };
 
@@ -237,13 +309,33 @@ function EngineeringExperience({ experience }: { experience: Experience[] }) {
 }
 
 function EngineeringTechStack({ engineeringTech }: { engineeringTech: TechStackItem[] }) {
+  const [techRowSize, setTechRowSize] = useState(desktopTechRowSize);
   const [visibleTech, setVisibleTech] = useState(
-    Math.min(minimumTechStack, engineeringTech.length),
+    Math.min(desktopTechRowSize, engineeringTech.length),
   );
   const shownTech = useMemo(
     () => engineeringTech.slice(0, visibleTech),
     [engineeringTech, visibleTech],
   );
+  const defaultVisibleTech = Math.min(techRowSize, engineeringTech.length);
+
+  useEffect(() => {
+    const syncRowSize = () => {
+      const nextRowSize = getTechRowSize();
+
+      setTechRowSize(nextRowSize);
+      setVisibleTech((current) =>
+        current <= techRowSize
+          ? Math.min(nextRowSize, engineeringTech.length)
+          : Math.min(engineeringTech.length, Math.max(nextRowSize, current)),
+      );
+    };
+
+    syncRowSize();
+    window.addEventListener("resize", syncRowSize);
+
+    return () => window.removeEventListener("resize", syncRowSize);
+  }, [engineeringTech.length, techRowSize]);
 
   return (
     <section className="tech-module">
@@ -284,7 +376,7 @@ function EngineeringTechStack({ engineeringTech }: { engineeringTech: TechStackI
         <button
           type="button"
           className="holo-button"
-          onClick={() => setVisibleTech((count) => Math.min(engineeringTech.length, count + 7))}
+          onClick={() => setVisibleTech((count) => Math.min(engineeringTech.length, count + techRowSize))}
           disabled={visibleTech >= engineeringTech.length}
         >
           <Plus size={18} />
@@ -293,8 +385,8 @@ function EngineeringTechStack({ engineeringTech }: { engineeringTech: TechStackI
         <button
           type="button"
           className="holo-button ghost-button"
-          onClick={() => setVisibleTech(Math.min(minimumTechStack, engineeringTech.length))}
-          disabled={visibleTech <= minimumTechStack}
+          onClick={() => setVisibleTech(defaultVisibleTech)}
+          disabled={visibleTech <= defaultVisibleTech}
         >
           <EyeOff size={18} />
           hide
@@ -323,11 +415,10 @@ export default function EngineeringSection({
           viewport={{ once: true, amount: 0.24 }}
           transition={{ duration: 0.75 }}
         >
-          <span className="section-eyebrow">Engineering mission stack</span>
-          {/* <h2 className="section-title">Robotics-minded software systems with orbital polish.</h2> */}
-          <p className="section-subtitle">
-            A focused view of my resume, projects, experience, and tools arranged like mission modules.
-          </p>
+          <SectionHeader
+            eyebrow="Engineering mission stack"
+            subtitle="A focused view of my resume, projects, experience, and tools arranged like mission modules."
+          />
         </motion.div>
 
         <EngineeringResume />

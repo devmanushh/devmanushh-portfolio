@@ -1,40 +1,57 @@
-import { randomUUID } from "node:crypto";
+import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 
 import { cookies } from "next/headers";
 
-const adminAccessTokens = new Map<string, number>();
 const tokenTtlMs = 30 * 60 * 1000;
 const adminAccessCookie = "portfolio_admin_access";
 
-function clearExpiredTokens() {
-  const now = Date.now();
+function getSigningSecret() {
+  return (
+    process.env.NEXTAUTH_SECRET ??
+    process.env.ADMIN_PASSWORD ??
+    "portfolio-admin-development-secret"
+  );
+}
 
-  for (const [token, expiresAt] of adminAccessTokens.entries()) {
-    if (expiresAt <= now) {
-      adminAccessTokens.delete(token);
-    }
-  }
+function signToken(payload: string) {
+  return createHmac("sha256", getSigningSecret()).update(payload).digest("hex");
 }
 
 export function createAdminAccessToken() {
-  clearExpiredTokens();
+  const expiresAt = Date.now() + tokenTtlMs;
+  const payload = `${expiresAt}.${randomUUID()}`;
+  const signature = signToken(payload);
 
-  const token = randomUUID();
-  adminAccessTokens.set(token, Date.now() + tokenTtlMs);
-
-  return token;
+  return `${payload}.${signature}`;
 }
 
 function hasAdminAccessToken(token?: string | null) {
-  clearExpiredTokens();
-
   if (!token) {
     return false;
   }
 
-  const expiresAt = adminAccessTokens.get(token);
+  const parts = token.split(".");
 
-  return typeof expiresAt === "number" && expiresAt > Date.now();
+  if (parts.length !== 3) {
+    return false;
+  }
+
+  const [expiresAtValue, nonce, signature] = parts;
+  const expiresAt = Number(expiresAtValue);
+
+  if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
+    return false;
+  }
+
+  const expectedSignature = signToken(`${expiresAtValue}.${nonce}`);
+  const signatureBuffer = Buffer.from(signature, "hex");
+  const expectedSignatureBuffer = Buffer.from(expectedSignature, "hex");
+
+  if (signatureBuffer.length !== expectedSignatureBuffer.length) {
+    return false;
+  }
+
+  return timingSafeEqual(signatureBuffer, expectedSignatureBuffer);
 }
 
 export async function setAdminAccessCookie(token: string) {

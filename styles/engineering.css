@@ -6,7 +6,7 @@
 }
 
 .engineering-intro {
-  margin-bottom: 2rem;
+  margin-bottom: 1.2rem;
 }
 
 .resume-module {
@@ -14,7 +14,7 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 1.2rem;
-  margin: 2.6rem 0 5rem;
+  margin: 1.8rem 0 3rem;
   padding: clamp(1.1rem, 3vw, 1.7rem);
 }
 
@@ -54,7 +54,7 @@
 .mission-section,
 .experience-module,
 .tech-module {
-  margin-top: clamp(4rem, 8vw, 7rem);
+  margin-top: clamp(2.6rem, 5vw, 4.4rem);
 }
 
 .module-heading {
@@ -103,6 +103,8 @@
     0 0 48px color-mix(in srgb, var(--accent) 9%, transparent);
   padding: clamp(1rem, 2.3vw, 1.55rem);
   transform-style: preserve-3d;
+  contain: layout paint;
+  will-change: transform, opacity;
   backdrop-filter: blur(22px) saturate(1.25);
   transition:
     box-shadow 260ms ease,
@@ -111,8 +113,7 @@
 }
 
 .project-card::after,
-.experience-log::after,
-.contact-terminal::after {
+.experience-log::after {
   content: "";
   position: absolute;
   left: 0;
@@ -549,6 +550,8 @@
     0 0 48px color-mix(in srgb, var(--accent) 12%, transparent);
   padding: clamp(1.1rem, 3vw, 1.65rem) clamp(1.2rem, 4vw, 2.2rem);
   backdrop-filter: blur(22px) saturate(1.2);
+  contain: layout paint;
+  will-change: transform, opacity;
   transform-style: preserve-3d;
 }
 
@@ -781,6 +784,8 @@
   font-weight: 850;
   text-align: center;
   backdrop-filter: blur(16px);
+  contain: layout paint;
+  will-change: transform, opacity;
   transform-style: preserve-3d;
 }
 
@@ -934,6 +939,8 @@
 
   .experience-log {
     grid-template-columns: 1fr;
+    overflow: hidden;
+    border-radius: 10px 22px 10px 22px;
   }
 
   .experience-timeline {
@@ -945,17 +952,111 @@
   }
 
   .tech-orbit-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.48rem;
+  }
+
+  .tech-chip {
+    min-height: 92px;
+    gap: 0.42rem;
+    border-radius: 7px 15px 7px 15px;
+    font-size: 0.72rem;
+    line-height: 1.12;
+    padding: 0.42rem 0.28rem;
+  }
+
+  .tech-chip .tech-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+  }
+
+  .tech-chip .tech-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .tech-chip-orbit {
+    width: 50px;
+    height: 50px;
+  }
+
+  .tech-chip-node {
+    width: 5px;
+    height: 5px;
+  }
+
+  .tech-chip-node-one {
+    left: 10px;
+    top: 10px;
+  }
+
+  .tech-chip-node-two {
+    right: 10px;
+    bottom: 10px;
   }
 }
 
 @media (max-width: 560px) {
+  .project-card {
+    min-height: 280px;
+    border-radius: 8px 22px 8px 22px;
+  }
+
+  .project-card h3 {
+    max-width: 100%;
+    font-size: clamp(1.55rem, 9vw, 2.35rem);
+  }
+
+  .project-card p {
+    max-width: 100%;
+  }
+
   .project-card-footer {
     align-items: flex-start;
     flex-direction: column;
   }
 
+  .experience-timeline::before,
+  .experience-timeline::after,
+  .experience-cable {
+    display: none;
+  }
+
+  .experience-timeline {
+    gap: 1rem;
+    padding-inline: 0;
+  }
+
+  .experience-log {
+    min-height: 0;
+    padding: 1rem;
+  }
+
+  .experience-log p,
+  .experience-duration {
+    margin-left: 0;
+  }
+
   .tech-orbit-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.38rem;
+  }
+
+  .tech-chip {
+    min-height: 78px;
+    font-size: 0.62rem;
+    padding: 0.34rem 0.2rem;
+  }
+
+  .tech-chip .tech-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+  }
+
+  .tech-chip .tech-icon svg {
+    width: 15px;
+    height: 15px;
   }
 }

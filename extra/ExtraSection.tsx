@@ -12,15 +12,20 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+import { SectionHeader } from "@/components/PortfolioChrome";
 import type { Activity } from "@/types/activity";
 
 const activityIcons = [Leaf, Waves, Camera, Brush, Compass, Sparkles];
 const initialVisibleActivities = 4;
+const activityEntrance = [
+  { x: -34, y: 20, rotateZ: -1.5 },
+  { x: 34, y: 20, rotateZ: 1.5 },
+  { x: 0, y: -34, rotateZ: 0.8 },
+  { x: 0, y: 34, rotateZ: -0.8 },
+];
 
 export default function ExtraSection({ activities }: { activities: Activity[] }) {
-  const [openIds, setOpenIds] = useState<number[]>(
-    activities[0]?.id ? [activities[0].id] : [],
-  );
+  const [openIds, setOpenIds] = useState<number[]>([]);
   const [showAllActivities, setShowAllActivities] = useState(false);
   const visibleActivities = showAllActivities
     ? activities
@@ -39,14 +44,10 @@ export default function ExtraSection({ activities }: { activities: Activity[] })
     <section id="extra" className="extra-section">
       <div className="section-frame">
         <div className="extra-heading-row">
-          <div className="section-heading-block">
-            <span className="section-eyebrow">organic side channel</span>
-            {/* <h2 className="section-title">Extra activities, made alive.</h2> */}
-            <p className="section-subtitle">
-              Exploring, making, moving, and collecting the human sparks that
-              live outside the console.
-            </p>
-          </div>
+          <SectionHeader
+            eyebrow="organic side channel..."
+            subtitle="Exploring, making, moving, and collecting the human sparks that live outside the console."
+          />
 
           <div className="activity-controls" aria-label="Extra activity controls">
               <button
@@ -80,13 +81,14 @@ export default function ExtraSection({ activities }: { activities: Activity[] })
           {visibleActivities.map((activity, index) => {
             const isOpen = openIds.includes(activity.id);
             const Icon = activityIcons[index % activityIcons.length];
+            const entrance = activityEntrance[index % activityEntrance.length];
 
             return (
               <motion.article
                 key={activity.id}
                 className={`activity-card holo-panel ${isOpen ? "is-open" : ""}`}
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, filter: "blur(10px)", ...entrance }}
+                whileInView={{ opacity: 1, x: 0, y: 0, rotateZ: 0, filter: "blur(0px)" }}
                 viewport={{ once: true, amount: 0.28 }}
                 whileHover={{ y: -7 }}
                 transition={{ delay: index * 0.07, type: "spring", stiffness: 180, damping: 18 }}

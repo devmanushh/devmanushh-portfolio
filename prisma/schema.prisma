@@ -13,32 +13,93 @@ model AdminUser {
   createdAt    DateTime @default(now())
 }
 
+model AdminPasswordResetToken {
+  id        Int       @id @default(autoincrement())
+  email     String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
 model Project {
   id          Int      @id @default(autoincrement())
   title       String
   description String
-  github      String
+  details     String?
+  github      String?
+  imageUrl    String?
+  techStack   String   @default("[]")
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Experience {
-  id        Int      @id @default(autoincrement())
-  company   String
-  role      String
-  duration  String
-  createdAt DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  company     String
+  role        String
+  duration    String
+  description String?
+  github      String?
+  linkedin    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Activity {
   id          Int      @id @default(autoincrement())
   title       String
   description String
+  details     String?
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model MapPlace {
   id        Int      @id @default(autoincrement())
   place     String
   country   String
+  lat       Float
+  lng       Float
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TechStackItem {
+  id        String   @id
+  label     String
+  icon      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProfileContent {
+  id             Int      @id @default(1)
+  heading        String
+  lineOne        String
+  lineTwo        String
+  currentCompany String
+  currentRole    String
+  heroImageUrl   String
+  updatedAt      DateTime @updatedAt
+}
+
+model ContactContent {
+  id                 Int      @id @default(1)
+  title              String
+  subtitle           String
+  namePlaceholder    String
+  emailPlaceholder   String
+  messagePlaceholder String
+  buttonLabel        String
+  email              String
+  facebook           String?
+  instagram          String?
+  snapchat           String?
+  github             String?
+  x                  String?
+  linkedin           String?
+  website            String?
+  updatedAt          DateTime @updatedAt
 }

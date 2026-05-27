@@ -17,6 +17,7 @@ import {
   removePlace,
   removeProject,
   removeTechStackItem,
+  syncResumeTechStack,
   updateContact,
   updateHeroImage,
   updateIntro,
@@ -139,7 +140,7 @@ export default async function AdminDashboard() {
           <FormActions label="Save Hero Section" />
         </form>
 
-        <form action={updateHeroImage} encType="multipart/form-data" style={formStyle}>
+        <form action={updateHeroImage} style={formStyle}>
           <input name="heroImage" type="file" accept="image/*" required />
           <FormActions label="Upload Hero Image" />
         </form>
@@ -185,11 +186,7 @@ export default async function AdminDashboard() {
             <li>Choose the PDF from your device.</li>
             <li>Upload it to update the public view and download links.</li>
           </ol>
-          <form
-            action={updateResumePdf}
-            encType="multipart/form-data"
-            style={formStyle}
-          >
+          <form action={updateResumePdf} style={formStyle}>
             <input
               name="resumePdf"
               type="file"
@@ -292,6 +289,12 @@ export default async function AdminDashboard() {
 
         <div style={itemStyle}>
           <h3>Tech Stack</h3>
+          <p style={{ color: "#777", marginTop: "8px" }}>
+            The public page shows one row first. Use these controls to add, update, delete, or restore the resume stack in the database.
+          </p>
+          <form action={syncResumeTechStack} style={formStyle}>
+            <button type="submit">Sync Resume Tech Stack To DB</button>
+          </form>
           <form action={createTechStackItem} style={formStyle}>
             <input name="id" placeholder="Unique id, e.g. next" required />
             <input name="label" placeholder="Label, e.g. Next.js" required />

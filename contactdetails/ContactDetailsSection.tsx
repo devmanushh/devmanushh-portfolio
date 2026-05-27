@@ -10,8 +10,10 @@ import {
   FaSnapchat,
   FaXTwitter,
 } from "react-icons/fa6";
-import { useState } from "react";
+import { useActionState } from "react";
 
+import { SectionHeader } from "@/components/PortfolioChrome";
+import { sendContactEmail } from "@/lib/contact-actions";
 import type { ContactContent } from "@/types/contact";
 
 export default function ContactDetailsSection({
@@ -19,7 +21,10 @@ export default function ContactDetailsSection({
 }: {
   contact: ContactContent;
 }) {
-  const [sent, setSent] = useState(false);
+  const [formState, formAction, isPending] = useActionState(sendContactEmail, {
+    ok: false,
+    message: "",
+  });
   const contactLinks = [
     {
       label: "Email",
@@ -44,9 +49,10 @@ export default function ContactDetailsSection({
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.72 }}
         >
-          <span className="section-eyebrow">royal correspondence</span>
-          <h2 className="section-title">{contact.title}</h2>
-          <p className="section-subtitle">{contact.subtitle}</p>
+          <SectionHeader
+            eyebrow="royal correspondence..."
+            subtitle={contact.subtitle}
+          />
 
           <div className="contact-socials" aria-label="Contact links">
             {contactLinks.map(({ label, href, Icon }) => {
@@ -86,10 +92,7 @@ export default function ContactDetailsSection({
 
         <motion.form
           className="contact-letter"
-          onSubmit={(event) => {
-            event.preventDefault();
-            setSent(true);
-          }}
+          action={formAction}
           initial={{ opacity: 0, y: 28, rotateX: 5 }}
           whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
           viewport={{ once: true, amount: 0.25 }}
@@ -100,19 +103,29 @@ export default function ContactDetailsSection({
           <div className="letter-crown" aria-hidden="true" />
           <label>
             <span>name</span>
-            <input placeholder={contact.namePlaceholder} />
+            <input name="name" placeholder={contact.namePlaceholder} required />
           </label>
           <label>
             <span>email</span>
-            <input placeholder={contact.emailPlaceholder} />
+            <input
+              name="email"
+              type="email"
+              placeholder={contact.emailPlaceholder}
+              required
+            />
           </label>
           <label>
             <span>message</span>
-            <textarea placeholder={contact.messagePlaceholder} />
+            <textarea name="message" placeholder={contact.messagePlaceholder} required />
           </label>
+          {formState.message ? (
+            <p className={`contact-form-status ${formState.ok ? "is-success" : "is-error"}`}>
+              {formState.message}
+            </p>
+          ) : null}
           <button type="submit" className="holo-button">
             <Send size={18} />
-            {sent ? "sealed and sent" : contact.buttonLabel}
+            {isPending ? "sealing..." : formState.ok ? formState.message : contact.buttonLabel}
           </button>
         </motion.form>
       </div>

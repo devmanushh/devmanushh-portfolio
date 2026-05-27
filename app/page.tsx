@@ -1,7 +1,6 @@
 import AdminAccessToast from "@/admin/AdminAccessToast";
-import ContactDetailsSection from "@/contactdetails/ContactDetailsSection";
-import EngineeringSection from "@/engineering/EngineeringSection";
-import ExtraSection from "@/extra/ExtraSection";
+import LazyPortfolioSections from "@/app/LazyPortfolioSections";
+import AmbientSignalCanvas from "@/components/AmbientSignalCanvas";
 import HeroSection from "@/herosection/HeroSection";
 import { getActivities } from "@/lib/activities-store";
 import { getContactContent } from "@/lib/contact-store";
@@ -11,7 +10,6 @@ import { getIntroContent } from "@/lib/profile-store";
 import { getProjects } from "@/lib/projects-store";
 import { getTechStack } from "@/lib/tech-stack-store";
 import { Footer, Navbar } from "@/navfoot/NavFoot";
-import NomadGlobeSection from "@/nomadglobe/NomadGlobeSection";
 
 export default async function HomePage({
   searchParams,
@@ -33,18 +31,19 @@ export default async function HomePage({
 
   return (
     <div className="app-shell">
+      <AmbientSignalCanvas />
       <AdminAccessToast denied={adminDenied} />
       <Navbar />
       <main className="app-main">
         <HeroSection intro={intro} />
-        <NomadGlobeSection places={places} />
-        <EngineeringSection
+        <LazyPortfolioSections
+          places={places}
           projects={projects}
           experience={experience}
           techStack={techStack}
+          activities={activities}
+          contact={contact}
         />
-        <ExtraSection activities={activities} />
-        <ContactDetailsSection contact={contact} />
       </main>
       <Footer />
     </div>

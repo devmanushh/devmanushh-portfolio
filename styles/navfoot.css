@@ -511,3 +511,69 @@
   }
 }
 
+@media (max-width: 980px) {
+  .nav-wrap {
+    top: 10px;
+    width: min(100% - 16px, 1120px);
+  }
+
+  .nav-glass-plate {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.45rem;
+    padding: 0.62rem 0.64rem 0.62rem 0.78rem;
+  }
+
+  .nav-right {
+    display: flex;
+    grid-column: 2;
+    gap: 0.24rem;
+  }
+
+  .nav-mobile-hidden {
+    display: none;
+  }
+
+  .theme-toggle-word,
+  .nav-text-link {
+    min-height: 36px;
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    border-radius: 999px;
+    padding: 0.42rem 0.54rem;
+    font-size: 0.78rem;
+  }
+
+  .theme-toggle-word svg,
+  .nav-text-link svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .mobile-menu-button,
+  .mobile-nav-panel {
+    display: none;
+  }
+
+  .brand-volcano {
+    width: 30px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 420px) {
+  .nav-brand {
+    gap: 0.36rem;
+    font-size: 0.95rem;
+  }
+
+  .brand-volcano {
+    display: none;
+  }
+
+  .theme-toggle-word,
+  .nav-text-link {
+    gap: 0.22rem;
+    padding-inline: 0.42rem;
+    font-size: 0.72rem;
+  }
+}
+

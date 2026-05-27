@@ -19,7 +19,11 @@
   justify-content: space-between;
   gap: 1.5rem;
   align-items: end;
-  margin-bottom: clamp(1.8rem, 4vw, 3rem);
+  margin-bottom: clamp(1.2rem, 3vw, 2rem);
+}
+
+.extra-heading-row .section-header-compound {
+  flex: 1 1 auto;
 }
 
 .activity-controls {
@@ -65,6 +69,7 @@
   border-radius: 24px;
   isolation: isolate;
   min-height: 126px;
+  will-change: transform, opacity;
 }
 
 .activity-card::after {
@@ -199,6 +204,15 @@
 }
 
 @media (max-width: 620px) {
+  .activity-grid {
+    gap: 0.82rem;
+  }
+
+  .activity-card {
+    min-height: 116px;
+    border-radius: 18px;
+  }
+
   .activity-trigger {
     grid-template-columns: 46px 1fr auto;
     gap: 0.8rem;
@@ -213,5 +227,7 @@
 
   .activity-details p {
     margin-left: 0.95rem;
+    margin-right: 0.95rem;
+    font-size: 0.95rem;
   }
 }

@@ -157,11 +157,16 @@
   line-height: 1.7;
 }
 
+.admin-auth-page,
 .admin-login-page {
+  position: relative;
   display: grid;
   min-height: 100vh;
+  overflow: hidden;
   place-items: center;
   background:
+    radial-gradient(circle at 18% 18%, rgba(42, 108, 95, 0.18), transparent 26%),
+    radial-gradient(circle at 82% 72%, rgba(111, 88, 51, 0.15), transparent 30%),
     linear-gradient(90deg, rgba(24, 22, 20, 0.035) 1px, transparent 1px),
     linear-gradient(rgba(24, 22, 20, 0.025) 1px, transparent 1px),
     #f5f1e8;
@@ -169,17 +174,81 @@
   padding: 24px;
 }
 
+.admin-auth-grid {
+  position: absolute;
+  inset: 18px;
+  border: 1px solid rgba(24, 22, 20, 0.08);
+  pointer-events: none;
+}
+
+.admin-auth-ring {
+  position: absolute;
+  width: 320px;
+  aspect-ratio: 1;
+  border: 2px dashed rgba(24, 22, 20, 0.15);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.admin-auth-ring-one {
+  top: -110px;
+  right: 8%;
+}
+
+.admin-auth-ring-two {
+  bottom: -130px;
+  left: 7%;
+  border-color: rgba(42, 108, 95, 0.22);
+}
+
+.admin-auth-stage {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: min(100%, 500px);
+}
+
+.admin-auth-card,
 .admin-login-card {
-  width: min(100%, 420px);
+  position: relative;
+  width: min(100%, 500px);
   border: 2px solid #181614;
-  border-radius: 18px 11px 21px 13px;
-  background: rgba(255, 250, 240, 0.74);
-  padding: 28px;
+  border-radius: 20px 12px 24px 14px;
+  background:
+    linear-gradient(135deg, rgba(255, 250, 240, 0.94), rgba(246, 238, 222, 0.8)),
+    rgba(255, 250, 240, 0.78);
+  padding: clamp(24px, 5vw, 34px);
   box-shadow:
-    7px 8px 0 rgba(24, 22, 20, 0.16),
+    8px 9px 0 rgba(24, 22, 20, 0.16),
     0 22px 60px rgba(24, 22, 20, 0.12);
 }
 
+.admin-auth-card::before,
+.admin-login-card::before {
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(24, 22, 20, 0.1);
+  border-radius: 15px 8px 19px 9px;
+  content: "";
+  pointer-events: none;
+}
+
+.admin-auth-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.admin-auth-card-top > span {
+  color: #5f574d;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-auth-icon,
 .admin-login-icon {
   display: grid;
   width: 46px;
@@ -187,15 +256,18 @@
   place-items: center;
   border: 2px solid #181614;
   border-radius: 999px;
-  background: #fff8e8;
+  background: linear-gradient(135deg, #fff8e8, #d7efe4);
   box-shadow: 3px 4px 0 rgba(24, 22, 20, 0.14);
 }
 
+.admin-auth-card h1,
 .admin-login-card h1 {
   margin: 20px 0 8px;
-  font-size: 2rem;
+  font-size: clamp(2rem, 8vw, 2.65rem);
+  line-height: 0.95;
 }
 
+.admin-auth-card p,
 .admin-login-card p {
   margin: 0;
   color: #5f574d;
@@ -208,16 +280,44 @@
   margin-top: 24px;
 }
 
+.admin-login-form label {
+  display: grid;
+  gap: 7px;
+}
+
+.admin-login-form label span {
+  color: #4d463d;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
 .admin-login-form input {
   border: 0;
   border-bottom: 2px solid rgba(24, 22, 20, 0.72);
   background: transparent;
   padding: 0.75rem 0.15rem;
+  color: #181614;
   outline: none;
 }
 
+.admin-login-form input:focus {
+  border-bottom-color: #2a6c5f;
+}
+
+.admin-auth-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  align-items: center;
+  margin-top: 2px;
+}
+
 .admin-login-form button {
+  display: inline-flex;
+  min-height: 42px;
   width: fit-content;
+  align-items: center;
+  gap: 8px;
   border: 2px solid #181614;
   border-radius: 999px;
   background: #181614;
@@ -226,6 +326,47 @@
   font-weight: 900;
   box-shadow: 3px 4px 0 rgba(24, 22, 20, 0.16);
   cursor: pointer;
+}
+
+.admin-login-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+}
+
+.admin-login-helper {
+  display: inline-flex;
+  min-height: 38px;
+  width: fit-content;
+  align-items: center;
+  gap: 7px;
+  margin-top: 0;
+  border-bottom: 2px solid rgba(24, 22, 20, 0.35);
+  color: #181614;
+  font-weight: 850;
+}
+
+.admin-login-helper:hover {
+  border-bottom-color: #181614;
+}
+
+.admin-form-status {
+  border: 1px solid rgba(24, 22, 20, 0.22);
+  border-radius: 10px;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.95rem;
+}
+
+.admin-form-status.is-success {
+  border-color: rgba(20, 102, 55, 0.42);
+  background: rgba(207, 242, 220, 0.58);
+  color: #146637;
+}
+
+.admin-form-status.is-error {
+  border-color: rgba(155, 28, 28, 0.42);
+  background: rgba(255, 226, 226, 0.64);
+  color: #9b1c1c;
 }
 
 @media (max-width: 760px) {
@@ -247,5 +388,20 @@
 
   .admin-content {
     padding: 22px;
+  }
+
+  .admin-auth-grid {
+    inset: 10px;
+  }
+
+  .admin-auth-ring {
+    width: 220px;
+  }
+
+  .admin-auth-card,
+  .admin-login-card {
+    box-shadow:
+      5px 6px 0 rgba(24, 22, 20, 0.14),
+      0 18px 44px rgba(24, 22, 20, 0.12);
   }
 }

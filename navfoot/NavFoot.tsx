@@ -7,8 +7,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const navItems = [
-  { href: "/#home", label: "home", icon: Home },
-  { href: "/#contact", label: "contact", icon: Contact },
+  { href: "/#home", label: "home", icon: Home, mobileHidden: true },
+  { href: "/#contact", label: "contact", icon: Contact, mobileHidden: true },
   { href: "/admin", label: "admin", icon: Shield },
 ];
 
@@ -22,7 +22,9 @@ export function Navbar() {
   const isDark = mounted ? resolvedTheme !== "light" : true;
 
   useEffect(() => {
-    setMounted(true);
+    const frame = requestAnimationFrame(() => setMounted(true));
+
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   return (
@@ -66,7 +68,11 @@ export function Navbar() {
             const Icon = item.icon;
 
             return (
-              <Link key={item.href} href={item.href} className="nav-text-link">
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`nav-text-link${item.mobileHidden ? " nav-mobile-hidden" : ""}`}
+              >
                 <Icon size={15} />
                 {item.label}
               </Link>

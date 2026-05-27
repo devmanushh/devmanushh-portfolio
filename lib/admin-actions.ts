@@ -1,9 +1,13 @@
 "use server";
 
 import { promises as fs } from "node:fs";
+import { randomBytes } from "node:crypto";
 import path from "node:path";
 
+import { compare, hash } from "bcryptjs";
+import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import nodemailer from "nodemailer";
 import { z } from "zod";
 
 import { addActivity, deleteActivity, updateActivity } from "@/lib/activities-store";
@@ -19,6 +23,7 @@ import { addProject, deleteProject, updateProject } from "@/lib/projects-store";
 import {
   addTechStackItem,
   deleteTechStackItem,
+  replaceTechStackWithDefaults,
   updateTechStackItem,
 } from "@/lib/tech-stack-store";
 import {
@@ -27,6 +32,7 @@ import {
   setAdminAccessCookie,
 } from "@/lib/admin-auth";
 import { redirect } from "next/navigation";
+import { hashAdminResetToken, withDatabase } from "@/lib/prisma";
 
 const resumeSchema = z.object({
   resume: z.string().min(1, "Resume content is required."),
@@ -107,6 +113,20 @@ const adminLoginSchema = z.object({
   password: z.string().min(1),
 });
 
+const adminResetSchema = z.object({
+  token: z.string().min(1),
+  password: z.string().min(8, "Password must be at least 8 characters."),
+  confirmPassword: z.string().min(8, "Password must be at least 8 characters."),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match.",
+  path: ["confirmPassword"],
+});
+
+export type AdminFormState = {
+  ok: boolean;
+  message: string;
+};
+
 const resumePath = path.join(process.cwd(), "public", "profile", "resume.txt");
 const resumePdfPath = path.join(process.cwd(), "public", "profile", "resume.pdf");
 const profileImageDir = path.join(process.cwd(), "public", "profile");
@@ -118,12 +138,208 @@ function parseCommaList(value?: string) {
     .filter(Boolean);
 }
 
+function getRequiredEnv(name: string) {
+  const value = process.env[name]?.trim();
+
+  if (!value) {
+    throw new Error(`${name} is not configured.`);
+  }
+
+  return value;
+}
+
+async function getAppOrigin() {
+  const configuredUrl = process.env.APP_URL?.trim();
+
+  if (configuredUrl) {
+    return configuredUrl.replace(/\/$/u, "");
+  }
+
+  const requestHeaders = await headers();
+  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
+  const protocol = requestHeaders.get("x-forwarded-proto") ?? "http";
+
+  if (!host) {
+    throw new Error("APP_URL is not configured.");
+  }
+
+  return `${protocol}://${host}`;
+}
+
+async function sendAdminResetEmail(resetUrl: string) {
+  const smtpHost = getRequiredEnv("SMTP_HOST");
+  const smtpPort = Number(process.env.SMTP_PORT ?? "587");
+  const smtpUser = getRequiredEnv("SMTP_USER");
+  const smtpPass = getRequiredEnv("SMTP_PASS");
+  const to = getRequiredEnv("ADMIN_EMAIL");
+  const from = process.env.MAIL_FROM?.trim() || smtpUser;
+  const secure = process.env.SMTP_SECURE === "true" || smtpPort === 465;
+  const transporter = nodemailer.createTransport({
+    host: smtpHost,
+    port: smtpPort,
+    secure,
+    auth: {
+      user: smtpUser,
+      pass: smtpPass,
+    },
+  });
+
+  await transporter.sendMail({
+    from,
+    to,
+    subject: "Portfolio admin password reset",
+    text: [
+      "Use this link to reset your portfolio admin password:",
+      resetUrl,
+      "",
+      "This link expires in 30 minutes. Ignore this email if you did not request it.",
+    ].join("\n"),
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2>Portfolio admin password reset</h2>
+        <p>Use this link to reset your portfolio admin password:</p>
+        <p><a href="${resetUrl}">Reset admin password</a></p>
+        <p>This link expires in 30 minutes. Ignore this email if you did not request it.</p>
+      </div>
+    `,
+  });
+}
+
+export async function requestAdminPasswordReset(
+  _previousState: AdminFormState,
+): Promise<AdminFormState> {
+  try {
+    const email = getRequiredEnv("ADMIN_EMAIL");
+    const token = randomBytes(32).toString("base64url");
+    const tokenHash = hashAdminResetToken(token);
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+    const origin = await getAppOrigin();
+    const resetUrl = `${origin}/admin/reset-password?token=${encodeURIComponent(token)}`;
+
+    const createdReset = await withDatabase((db) =>
+      db.adminPasswordResetToken.create({
+        data: {
+          email,
+          tokenHash,
+          expiresAt,
+        },
+      }),
+    );
+
+    if (!createdReset) {
+      throw new Error("Password reset storage is unavailable.");
+    }
+
+    await sendAdminResetEmail(resetUrl);
+
+    return {
+      ok: true,
+      message: "Reset link sent to the admin email.",
+    };
+  } catch (error) {
+    console.error("Admin password reset email failed:", error);
+
+    return {
+      ok: false,
+      message:
+        error instanceof Error && error.message.includes("configured")
+          ? error.message
+          : "Reset email could not be sent. Check SMTP settings and try again.",
+    };
+  }
+}
+
+export async function resetAdminPassword(
+  _previousState: AdminFormState,
+  formData: FormData,
+): Promise<AdminFormState> {
+  const parsed = adminResetSchema.safeParse(Object.fromEntries(formData));
+
+  if (!parsed.success) {
+    return {
+      ok: false,
+      message: parsed.error.issues[0]?.message ?? "Password could not be reset.",
+    };
+  }
+
+  const tokenHash = hashAdminResetToken(parsed.data.token);
+  const passwordHash = await hash(parsed.data.password, 12);
+  const updated = await withDatabase(async (db) => {
+    const resetToken = await db.adminPasswordResetToken.findUnique({
+      where: { tokenHash },
+    });
+
+    if (!resetToken || resetToken.usedAt) {
+      return false;
+    }
+
+    if (new Date(resetToken.expiresAt).getTime() <= Date.now()) {
+      return false;
+    }
+
+    await db.adminUser.upsert({
+      where: { email: resetToken.email },
+      create: {
+        email: resetToken.email,
+        passwordHash,
+      },
+      update: {
+        passwordHash,
+      },
+    });
+    await db.adminPasswordResetToken.update({
+      where: { tokenHash },
+      data: {
+        usedAt: new Date().toISOString(),
+      },
+    });
+
+    return true;
+  });
+
+  if (!updated) {
+    return {
+      ok: false,
+      message: "Reset link is invalid or expired.",
+    };
+  }
+
+  await clearAdminAccessCookie();
+  revalidatePath("/admin");
+
+  return {
+    ok: true,
+    message: "Password reset. You can sign in with the new password.",
+  };
+}
+
 export async function adminLogin(formData: FormData) {
   const parsed = adminLoginSchema.parse(Object.fromEntries(formData));
+  const dbAdminResult = await withDatabase(async (db) => {
+    const adminUser = await db.adminUser.findUnique({
+      where: { email: parsed.email },
+    });
+
+    if (!adminUser) {
+      return {
+        exists: false,
+        matches: false,
+      };
+    }
+
+    return {
+      exists: true,
+      matches: await compare(parsed.password, adminUser.passwordHash),
+    };
+  });
+
   const email = process.env.ADMIN_EMAIL ?? "";
   const password = process.env.ADMIN_PASSWORD ?? "";
+  const canUseEnvFallback = !dbAdminResult || !dbAdminResult.exists;
+  const envAdminMatches =
+    canUseEnvFallback && parsed.email === email && parsed.password === password;
 
-  if (parsed.email !== email || parsed.password !== password) {
+  if (!dbAdminResult?.matches && !envAdminMatches) {
     redirect("/?admin=denied");
   }
 
@@ -377,6 +593,13 @@ export async function removeTechStackItem(formData: FormData) {
   if (id) {
     await deleteTechStackItem(id);
   }
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+}
+
+export async function syncResumeTechStack() {
+  await replaceTechStackWithDefaults();
 
   revalidatePath("/");
   revalidatePath("/admin");

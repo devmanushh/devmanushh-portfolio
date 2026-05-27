@@ -1,6 +1,9 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
+import { readJsonStore } from "@/lib/json-store";
+import { withDatabase } from "@/lib/prisma";
+
 export type IntroContent = {
   heading: string;
   lineOne: string;
@@ -33,6 +36,44 @@ async function ensureStore() {
 }
 
 export async function getIntroContent() {
+  const dbIntro = await withDatabase(async (db) => {
+    const existing = await db.profileContent.findUnique({ where: { id: 1 } });
+
+    if (existing) {
+      return existing;
+    }
+
+    const seedIntro = await readJsonStore<IntroContent>(
+      "profile.store.json",
+      defaultIntro,
+    );
+
+    return db.profileContent.create({
+      data: {
+        id: 1,
+        ...defaultIntro,
+        ...seedIntro,
+      },
+    });
+  });
+
+  if (dbIntro) {
+    const intro = {
+      heading: dbIntro.heading,
+      lineOne: dbIntro.lineOne,
+      lineTwo: dbIntro.lineTwo,
+      currentCompany: dbIntro.currentCompany,
+      currentRole: dbIntro.currentRole,
+      heroImageUrl: dbIntro.heroImageUrl,
+    };
+
+    if (staleIntroHeadings.has(intro.heading)) {
+      return updateIntroContent(defaultIntro);
+    }
+
+    return intro;
+  }
+
   await ensureStore();
   const raw = await fs.readFile(storePath, "utf8");
   const intro = {
@@ -54,6 +95,28 @@ export async function updateIntroContent(content: IntroContent) {
     ...defaultIntro,
     ...content,
   };
+
+  const dbIntro = await withDatabase((db) =>
+    db.profileContent.upsert({
+      where: { id: 1 },
+      create: {
+        id: 1,
+        ...intro,
+      },
+      update: intro,
+    }),
+  );
+
+  if (dbIntro) {
+    return {
+      heading: dbIntro.heading,
+      lineOne: dbIntro.lineOne,
+      lineTwo: dbIntro.lineTwo,
+      currentCompany: dbIntro.currentCompany,
+      currentRole: dbIntro.currentRole,
+      heroImageUrl: dbIntro.heroImageUrl,
+    };
+  }
 
   await fs.writeFile(storePath, JSON.stringify(intro, null, 2), "utf8");
 
