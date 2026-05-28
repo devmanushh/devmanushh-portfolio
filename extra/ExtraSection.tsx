@@ -7,6 +7,8 @@ import {
   ChevronDown,
   Compass,
   Leaf,
+  Minus,
+  Plus,
   Sparkles,
   Waves,
 } from "lucide-react";
@@ -48,33 +50,7 @@ export default function ExtraSection({ activities }: { activities: Activity[] })
             eyebrow="organic side channel..."
             subtitle="Exploring, making, moving, and collecting the human sparks that live outside the console."
           />
-
-          <div className="activity-controls" aria-label="Extra activity controls">
-              <button
-                type="button"
-                onClick={() => setShowAllActivities(true)}
-                disabled={!hasHiddenActivities || showAllActivities}
-              >
-                Expand
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowAllActivities(false);
-                  setOpenIds((current) =>
-                    current.filter((id) =>
-                      activities
-                        .slice(0, initialVisibleActivities)
-                        .some((activity) => activity.id === id),
-                    ),
-                  );
-                }}
-                disabled={!hasHiddenActivities || !showAllActivities}
-              >
-                Hide
-              </button>
-            </div>
-          </div>
+        </div>
 
         <div className="activity-grid">
           <AnimatePresence initial={false}>
@@ -131,6 +107,36 @@ export default function ExtraSection({ activities }: { activities: Activity[] })
             );
           })}
           </AnimatePresence>
+        </div>
+
+        <div className="activity-controls" aria-label="Extra activity controls">
+          <button
+            type="button"
+            onClick={() => setShowAllActivities(true)}
+            disabled={!hasHiddenActivities || showAllActivities}
+            aria-label="Show more extra activities"
+            title="Show more extra activities"
+          >
+            <Plus size={18} />
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setShowAllActivities(false);
+              setOpenIds((current) =>
+                current.filter((id) =>
+                  activities
+                    .slice(0, initialVisibleActivities)
+                    .some((activity) => activity.id === id),
+                ),
+              );
+            }}
+            disabled={!hasHiddenActivities || !showAllActivities}
+            aria-label="Show fewer extra activities"
+            title="Show fewer extra activities"
+          >
+            <Minus size={18} />
+          </button>
         </div>
       </div>
     </section>

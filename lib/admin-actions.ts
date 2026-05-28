@@ -10,19 +10,21 @@ import { revalidatePath } from "next/cache";
 import nodemailer from "nodemailer";
 import { z } from "zod";
 
-import { addActivity, deleteActivity, updateActivity } from "@/lib/activities-store";
+import { addActivity, deleteActivity, getActivities, updateActivity } from "@/lib/activities-store";
 import { updateContactContent } from "@/lib/contact-store";
 import {
   addExperience,
   deleteExperience,
+  getExperience,
   updateExperience,
 } from "@/lib/experience-store";
-import { addPlace, deletePlace, updatePlace } from "@/lib/places-store";
+import { addPlace, deletePlace, getPlaces, updatePlace } from "@/lib/places-store";
 import { getIntroContent, updateIntroContent } from "@/lib/profile-store";
-import { addProject, deleteProject, updateProject } from "@/lib/projects-store";
+import { addProject, deleteProject, getProjects, updateProject } from "@/lib/projects-store";
 import {
   addTechStackItem,
   deleteTechStackItem,
+  getTechStack,
   replaceTechStackWithDefaults,
   updateTechStackItem,
 } from "@/lib/tech-stack-store";
@@ -138,6 +140,31 @@ function parseCommaList(value?: string) {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function normalizeName(value: string) {
+  return value.trim().replace(/\s+/gu, " ").toLowerCase();
+}
+
+function hasMatchingName<T>(
+  items: T[],
+  getName: (item: T) => string,
+  candidate: string,
+) {
+  const normalizedCandidate = normalizeName(candidate);
+
+  return items.some((item) => normalizeName(getName(item)) === normalizedCandidate);
+}
+
+function assertNoMatchingName<T>(
+  items: T[],
+  getName: (item: T) => string,
+  candidate: string,
+  message: string,
+) {
+  if (hasMatchingName(items, getName, candidate)) {
+    throw new Error(message);
+  }
 }
 
 function getRequiredEnv(name: string) {
@@ -504,6 +531,14 @@ export async function updateHeroImage(formData: FormData) {
 
 export async function createActivity(formData: FormData) {
   const parsed = activitySchema.parse(Object.fromEntries(formData));
+  const activities = await getActivities();
+
+  assertNoMatchingName(
+    activities,
+    (activity) => activity.title,
+    parsed.title,
+    "An extra activity with this title already exists.",
+  );
 
   await addActivity({
     title: parsed.title,
@@ -542,6 +577,14 @@ export async function removeActivity(formData: FormData) {
 
 export async function createProject(formData: FormData) {
   const parsed = projectSchema.parse(Object.fromEntries(formData));
+  const projects = await getProjects();
+
+  assertNoMatchingName(
+    projects,
+    (project) => project.title,
+    parsed.title,
+    "A project with this title already exists.",
+  );
 
   await addProject({
     title: parsed.title,
@@ -584,6 +627,18 @@ export async function removeProject(formData: FormData) {
 
 export async function createExperience(formData: FormData) {
   const parsed = experienceSchema.parse(Object.fromEntries(formData));
+  const experience = await getExperience();
+  const company = normalizeName(parsed.company);
+  const role = normalizeName(parsed.role);
+
+  if (
+    experience.some(
+      (item) =>
+        normalizeName(item.company) === company && normalizeName(item.role) === role,
+    )
+  ) {
+    throw new Error("An experience entry with this company and role already exists.");
+  }
 
   await addExperience({
     company: parsed.company,
@@ -628,6 +683,17 @@ export async function removeExperience(formData: FormData) {
 
 export async function createTechStackItem(formData: FormData) {
   const parsed = techStackSchema.parse(Object.fromEntries(formData));
+  const techStack = await getTechStack();
+  const id = normalizeName(parsed.id);
+  const label = normalizeName(parsed.label);
+
+  if (
+    techStack.some(
+      (item) => normalizeName(item.id) === id || normalizeName(item.label) === label,
+    )
+  ) {
+    throw new Error("A tech stack item with this id or label already exists.");
+  }
 
   await addTechStackItem(parsed);
 
@@ -667,6 +733,18 @@ export async function syncResumeTechStack() {
 
 export async function createPlace(formData: FormData) {
   const parsed = placeSchema.parse(Object.fromEntries(formData));
+  const places = await getPlaces();
+  const place = normalizeName(parsed.place);
+  const country = normalizeName(parsed.country);
+
+  if (
+    places.some(
+      (item) =>
+        normalizeName(item.place) === place && normalizeName(item.country) === country,
+    )
+  ) {
+    throw new Error("A globe location with this place and country already exists.");
+  }
 
   await addPlace(parsed);
 

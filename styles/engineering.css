@@ -482,6 +482,14 @@
   margin-top: 1.5rem;
 }
 
+.module-controls .holo-button {
+  width: 46px;
+  min-width: 46px;
+  min-height: 46px;
+  justify-content: center;
+  padding: 0;
+}
+
 .module-controls button:disabled {
   cursor: not-allowed;
   opacity: 0.42;

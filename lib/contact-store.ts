@@ -9,7 +9,7 @@ import type { ContactContent } from "@/types/contact";
 const storePath = path.join(process.cwd(), "data", "contact.store.json");
 
 const defaultContact: ContactContent = {
-  title: "Contact details.",
+  title: "contact me",
   subtitle: "say hello",
   namePlaceholder: "your name",
   emailPlaceholder: "your email",

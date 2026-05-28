@@ -169,63 +169,66 @@ export default function NomadGlobeSection({ places }: { places: MapPlace[] }) {
     <section id="map" className="nomad-section">
       <div className="nomad-stars" />
       <div className="nomad-background-planet" />
-      <motion.span
-        className="section-eyebrow nomad-eyebrow"
-        initial={{ opacity: 0, x: -18 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, amount: 0.4 }}
-        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      >
-        nomad globe...
-      </motion.span>
 
-      <div className="nomad-layout">
-        <motion.div
-          className="nomad-globe-panel"
-          initial={{ opacity: 0, y: 70, scale: 0.95 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, amount: 0.18 }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <StableGlobeCanvas places={places} />
-        </motion.div>
-
-        <motion.div
-          className="nomad-stream-panel"
-          initial={{ opacity: 0, x: 36 }}
+      <div className="section-frame nomad-frame">
+        <motion.span
+          className="section-eyebrow nomad-eyebrow"
+          initial={{ opacity: 0, x: -18 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1], delay: 0.16 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="coordinate-track" aria-label="visited location stream">
-            <span className="section-eyebrow nomad-stream-eyebrow">location stream...</span>
-            <div className="coordinate-scroll-window">
-              <div className="coordinate-scroll-list">
-                {streamPlaces.map((place, index) => {
-                  const displayIndex = places.length > 0 ? (index % places.length) + 1 : 1;
+          nomad globe...
+        </motion.span>
 
-                  return (
-                    <article
-                      key={`${place.id}-${index}`}
-                      aria-hidden={index >= places.length}
-                      className="coordinate-row"
-                      style={{ "--i": index } as CSSProperties}
-                    >
-                      <span className="coordinate-index">{String(displayIndex).padStart(2, "0")}.</span>
-                      <strong>{place.place}</strong>
-                      <em>{place.country}</em>
-                      <code>
-                        {Math.abs(place.lat).toFixed(2)}
-                        {place.lat >= 0 ? "N" : "S"} {Math.abs(place.lng).toFixed(2)}
-                        {place.lng >= 0 ? "E" : "W"}
-                      </code>
-                    </article>
-                  );
-                })}
+        <div className="nomad-layout">
+          <motion.div
+            className="nomad-globe-panel"
+            initial={{ opacity: 0, y: 70, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.18 }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <StableGlobeCanvas places={places} />
+          </motion.div>
+
+          <motion.div
+            className="nomad-stream-panel"
+            initial={{ opacity: 0, x: 36 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1], delay: 0.16 }}
+          >
+            <div className="coordinate-track" aria-label="visited location stream">
+              <span className="section-eyebrow nomad-stream-eyebrow">location stream...</span>
+              <div className="coordinate-scroll-window">
+                <div className="coordinate-scroll-list">
+                  {streamPlaces.map((place, index) => {
+                    const displayIndex = places.length > 0 ? (index % places.length) + 1 : 1;
+
+                    return (
+                      <article
+                        key={`${place.id}-${index}`}
+                        aria-hidden={index >= places.length}
+                        className="coordinate-row"
+                        style={{ "--i": index } as CSSProperties}
+                      >
+                        <span className="coordinate-index">{String(displayIndex).padStart(2, "0")}.</span>
+                        <strong>{place.place}</strong>
+                        <em>{place.country}</em>
+                        <code>
+                          {Math.abs(place.lat).toFixed(2)}
+                          {place.lat >= 0 ? "N" : "S"} {Math.abs(place.lng).toFixed(2)}
+                          {place.lng >= 0 ? "E" : "W"}
+                        </code>
+                      </article>
+                    );
+                  })}
+                </div>
               </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

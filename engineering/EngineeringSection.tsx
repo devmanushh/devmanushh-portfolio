@@ -33,7 +33,7 @@ import {
   IconWebhook,
 } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Download, ExternalLink, Eye, EyeOff, FileText, Plus } from "lucide-react";
+import { Download, ExternalLink, Eye, FileText, Minus, Plus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { FaGithub } from "react-icons/fa";
 
@@ -218,18 +218,20 @@ function EngineeringProjects({ projects }: { projects: Project[] }) {
           className="holo-button"
           onClick={() => setVisibleProjects((count) => Math.min(projects.length, count + 1))}
           disabled={visibleProjects >= projects.length}
+          aria-label="Show more projects"
+          title="Show more projects"
         >
           <Plus size={18} />
-          expand
         </button>
         <button
           type="button"
           className="holo-button ghost-button"
           onClick={() => setVisibleProjects(Math.min(minimumProjects, projects.length))}
           disabled={visibleProjects <= minimumProjects}
+          aria-label="Show fewer projects"
+          title="Show fewer projects"
         >
-          <EyeOff size={18} />
-          hide
+          <Minus size={18} />
         </button>
       </div>
     </section>
@@ -290,18 +292,20 @@ function EngineeringExperience({ experience }: { experience: Experience[] }) {
           className="holo-button"
           onClick={() => setVisibleExperience((count) => Math.min(experience.length, count + 1))}
           disabled={visibleExperience >= experience.length}
+          aria-label="Show more experience"
+          title="Show more experience"
         >
           <Plus size={18} />
-          expand
         </button>
         <button
           type="button"
           className="holo-button ghost-button"
           onClick={() => setVisibleExperience(Math.min(minimumExperience, experience.length))}
           disabled={visibleExperience <= minimumExperience}
+          aria-label="Show fewer experience entries"
+          title="Show fewer experience entries"
         >
-          <EyeOff size={18} />
-          hide
+          <Minus size={18} />
         </button>
       </div>
     </section>
@@ -378,18 +382,20 @@ function EngineeringTechStack({ engineeringTech }: { engineeringTech: TechStackI
           className="holo-button"
           onClick={() => setVisibleTech((count) => Math.min(engineeringTech.length, count + techRowSize))}
           disabled={visibleTech >= engineeringTech.length}
+          aria-label="Show more tech stack"
+          title="Show more tech stack"
         >
           <Plus size={18} />
-          expand
         </button>
         <button
           type="button"
           className="holo-button ghost-button"
           onClick={() => setVisibleTech(defaultVisibleTech)}
           disabled={visibleTech <= defaultVisibleTech}
+          aria-label="Show fewer tech stack items"
+          title="Show fewer tech stack items"
         >
-          <EyeOff size={18} />
-          hide
+          <Minus size={18} />
         </button>
       </div>
     </section>

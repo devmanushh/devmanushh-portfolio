@@ -51,6 +51,7 @@ export default function ContactDetailsSection({
         >
           <SectionHeader
             eyebrow="royal correspondence..."
+            title={contact.title}
             subtitle={contact.subtitle}
           />
 

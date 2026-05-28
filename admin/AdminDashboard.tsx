@@ -357,25 +357,23 @@ export default async function AdminDashboard() {
       <section id="contact" style={sectionStyle}>
         <h2>Contact</h2>
         <form action={updateContact} style={formStyle}>
-          <input name="title" defaultValue={contact.title} required />
+          <div className="admin-readonly-panel">
+            <span>Contact form heading</span>
+            <strong>{contact.title}</strong>
+          </div>
+          <input type="hidden" name="title" value={contact.title} />
+          <input type="hidden" name="namePlaceholder" value={contact.namePlaceholder} />
+          <input type="hidden" name="emailPlaceholder" value={contact.emailPlaceholder} />
+          <input type="hidden" name="messagePlaceholder" value={contact.messagePlaceholder} />
+          <input type="hidden" name="buttonLabel" value={contact.buttonLabel} />
           <input name="subtitle" defaultValue={contact.subtitle} required />
           <input name="email" defaultValue={contact.email} required />
-          <input
-            name="namePlaceholder"
-            defaultValue={contact.namePlaceholder}
-            required
-          />
-          <input
-            name="emailPlaceholder"
-            defaultValue={contact.emailPlaceholder}
-            required
-          />
-          <input
-            name="messagePlaceholder"
-            defaultValue={contact.messagePlaceholder}
-            required
-          />
-          <input name="buttonLabel" defaultValue={contact.buttonLabel} required />
+          <div className="admin-readonly-grid" aria-label="Fixed contact form labels">
+            <span>{contact.namePlaceholder}</span>
+            <span>{contact.emailPlaceholder}</span>
+            <span>{contact.messagePlaceholder}</span>
+            <span>{contact.buttonLabel}</span>
+          </div>
           <input name="facebook" defaultValue={contact.facebook ?? ""} placeholder="Facebook profile URL" />
           <input name="instagram" defaultValue={contact.instagram ?? ""} placeholder="Instagram profile URL" />
           <input name="snapchat" defaultValue={contact.snapchat ?? ""} placeholder="Snapchat profile URL" />
